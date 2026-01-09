@@ -55,8 +55,9 @@ public class DistributedFPSet  {
 			fpSetConfiguration.setFpBits(1 + prefixBits);
 			final FPSet fpSet = FPSetFactory.getFPSet(fpSetConfiguration);
 			final String filename = "FPSet" + System.currentTimeMillis();
-			fpSet.init(1,metadir,filename);
-			
+			fpSet.init(1, metadir, filename);
+			fpSet.exportForRMI();
+
 			// Print out fpset type and nested FPSets when MultiFPSet
 			System.err.println("FPSet instance type is: " + fpSet.getClass().getName());
 			if (fpSet instanceof MultiFPSet) {

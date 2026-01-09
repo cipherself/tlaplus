@@ -42,3 +42,4 @@ Debug05SimTest.bin
 tlatools/org.lamport.tlatools/test-model/test.out
 .tlacache/
 .Rproj.user
+*.prefs

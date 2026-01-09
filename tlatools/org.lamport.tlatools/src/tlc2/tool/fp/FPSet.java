@@ -6,6 +6,7 @@
 package tlc2.tool.fp;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -21,25 +22,58 @@ import tlc2.util.LongVec;
  *
  * Note: All concrete subclasses of this class are required to
  * guarantee that their methods are thread-safe.
+ *
+ * For distributed TLC, call {@link #exportForRMI()} to enable RMI.
  */
 @SuppressWarnings("serial")
-public abstract class FPSet extends UnicastRemoteObject implements FPSetRMI
-{
-	/**
-	 * Size of a Java long in bytes
-	 */
-	protected static final long LongSize = 8;
+public abstract class FPSet implements FPSetRMI, Serializable {
+    /**
+     * System property to disable RMI export.
+     */
+    public static final String DISABLE_RMI_PROPERTY = "tlc2.tool.fp.FPSet.disableRMI";
 
-	/**
-	 * Counts the amount of states passed to the containsBlock method
-	 */
-	//TODO need AtomicLong here to prevent dirty writes to statesSeen?
-	protected long statesSeen = 0L;
+    /**
+     * Size of a Java long in bytes
+     */
+    protected static final long LongSize = 8;
 
-	protected final FPSetConfiguration fpSetConfig;
-	
+    /**
+     * Counts the amount of states passed to the containsBlock method
+     */
+    // TODO need AtomicLong here to prevent dirty writes to statesSeen?
+    protected long statesSeen = 0L;
+
+    protected final FPSetConfiguration fpSetConfig;
+
+    /**
+     * Tracks whether this FPSet has been exported for RMI access.
+     */
+    private transient boolean exportedForRMI = false;
+
     protected FPSet(final FPSetConfiguration fpSetConfig) throws RemoteException {
-    	this.fpSetConfig = fpSetConfig;
+        this.fpSetConfig = fpSetConfig;
+    }
+
+    /**
+     * Export this FPSet for RMI access. This is required for distributed TLC
+     * where FPSets run on remote machines.
+     *
+     * @return this FPSet for method chaining
+     * @throws RemoteException if RMI export fails
+     */
+    public FPSet exportForRMI() throws RemoteException {
+        if (!exportedForRMI && !Boolean.getBoolean(DISABLE_RMI_PROPERTY)) {
+            UnicastRemoteObject.exportObject(this, 0);
+            exportedForRMI = true;
+        }
+        return this;
+    }
+
+    /**
+     * @return true if this FPSet has been exported for RMI access
+     */
+    public boolean isExportedForRMI() {
+        return exportedForRMI;
     }
 
     /**

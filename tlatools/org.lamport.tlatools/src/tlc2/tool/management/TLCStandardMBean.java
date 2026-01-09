@@ -49,6 +49,9 @@ public abstract class TLCStandardMBean extends StandardMBean {
 	 * @see MBeanServer#registerMBean(Object, ObjectName)
 	 */
 	protected boolean registerMBean(final String objectName){
+		if (Boolean.getBoolean("tlc2.tool.management.disable.jmx")) {
+			return true;
+		}
 		// register monitoring mx bean
 		MBeanServer mbs = ManagementFactory.getPlatformMBeanServer(); 
 		try {
@@ -68,6 +71,9 @@ public abstract class TLCStandardMBean extends StandardMBean {
 			return false;
 		} catch (NotCompliantMBeanException e) {
 			e.printStackTrace();
+			return false;
+		} catch (Throwable t) {
+			t.printStackTrace();
 			return false;
 		}
 		return true;
