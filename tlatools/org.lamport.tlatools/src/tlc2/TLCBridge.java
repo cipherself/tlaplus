@@ -24,9 +24,9 @@ import util.ToolIO;
  * Bridge class for running the TLA+ REPL and Model Checker from JavaScript.
  * Provides JavaScript interoperability via native methods.
  */
-public class REPLBridge {
+public class TLCBridge {
 
-    private static REPLBridge instance;
+    private static TLCBridge instance;
     private final REPL repl;
     private final Path tempDir;
     private final ByteArrayOutputStream outputCapture;
@@ -40,7 +40,7 @@ public class REPLBridge {
     private TLC currentTLC = null;
 
     // Native method to capture this instance in JavaScript
-    public static native void setInstance(REPLBridge bridge);
+    public static native void setInstance(TLCBridge bridge);
 
     // Native method to send output to JavaScript
     public static native void sendOutput(String output);
@@ -51,7 +51,7 @@ public class REPLBridge {
     // Native method to report model checking result
     public static native void onCheckComplete(String resultJson);
 
-    public REPLBridge() throws IOException {
+    public TLCBridge() throws IOException {
         this.tempDir = Files.createTempDirectory(REPL.TEMP_DIR_PREFIX);
         this.repl = new REPL(tempDir);
 
@@ -320,7 +320,7 @@ public class REPLBridge {
 
     public static void main(String[] args) {
         try {
-            REPLBridge bridge = new REPLBridge();
+            TLCBridge bridge = new TLCBridge();
 
             // Start a thread that keeps the instance alive and captures it in JavaScript
             new Thread(() -> {
