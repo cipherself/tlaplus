@@ -64,7 +64,7 @@ public class TLCReplBridge {
             new Thread(() -> {
                 setInstance(bridge);
                 sendOutput("TLA+ REPL initialized.\n");
-                sendOutput("Enter constant-level TLA+ expressions.\n");
+                sendOutput("Enter TLA+ expressions.\n");
             }, "TLCReplBridge-main").start();
         } catch (IOException e) {
             System.err.println("Failed to initialize REPL: " + e.getMessage());
